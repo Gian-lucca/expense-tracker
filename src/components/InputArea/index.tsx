@@ -20,31 +20,40 @@ export const InputArea = ({ onAdd }: Props) => {
   const handleAddEvent = () => {
     let errors: string[] = [];
 
-    if(isNaN(new Date(dateField).getTime())) {
+    if (isNaN(new Date(dateField).getTime())) {
       errors.push('Data inválida!');
     }
-    if(!categoryKeys.includes(categoryField)) {
+    if (!categoryKeys.includes(categoryField)) {
       errors.push('Categoria inválida!');
     }
-    if(titleField === '') {
+    if (titleField === '') {
       errors.push('Título vazio!');
     }
-    if(valueField <= 0) {
+    if (valueField <= 0) {
       errors.push('Valor inválido!');
     }
 
-    if(errors.length > 0) {
-      alert(errors.join("\n"));
+    if (errors.length > 0) {
+      alert(errors.join('\n'));
     } else {
-      onAdd({
+      const newItem: Item = {
         date: newDateAdjusted(dateField),
         category: categoryField,
         title: titleField,
-        value: valueField
-      });
+        value: valueField,
+      };
+
+      // Salva no localStorage
+      const storedItems = JSON.parse(localStorage.getItem('gastos') || '[]');
+      storedItems.push(newItem);
+      localStorage.setItem('gastos', JSON.stringify(storedItems));
+
+      // Envia o item para o App
+      onAdd(newItem);
+
       clearFields();
-    }
   }
+};
 
   const clearFields = () => {
     setDateField('');
